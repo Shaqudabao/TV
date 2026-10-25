@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -18,8 +19,20 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: 接受 Android SDK 协议
-        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+      - name: 接受 Android SDK 协议并安装 SDK 36
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0" > /dev/null
+
+      - name: 拉取定制 media3 aar（Shaqudabao/media 仓的 libs 分支）
+        run: |
+          rm -rf /tmp/media-libs
+          git clone --depth 1 --branch libs https://github.com/Shaqudabao/media.git /tmp/media-libs
+          COUNT=$(ls /tmp/media-libs/*.aar 2>/dev/null | wc -l)
+          echo "拉到 aar 数量: $COUNT"
+          if [ "$COUNT" -lt 19 ]; then echo "::error::libs 分支 aar 不足，请先跑 media 仓的编译 workflow"; exit 1; fi
+          ls -la /tmp/media-libs/
+          cp /tmp/media-libs/*.aar app/libs/
 
       - name: 生成临时签名（debug 验证用，每次编译随机，仅第一锅）
         run: |
