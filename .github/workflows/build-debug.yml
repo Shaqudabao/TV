@@ -19,10 +19,10 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: 接受 Android SDK 协议并安装 SDK 37
+      - name: 接受 Android SDK 协议并安装 SDK 36
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0" > /dev/null
 
       - name: 拉取定制 media3 aar（Shaqudabao/media 仓的 libs 分支）
         run: |
