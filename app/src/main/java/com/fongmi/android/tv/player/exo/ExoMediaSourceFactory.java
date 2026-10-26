@@ -3,7 +3,6 @@ package com.fongmi.android.tv.player.exo;
 import androidx.annotation.NonNull;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
-import androidx.media3.common.util.LocalClearKeyLicense;
 import androidx.media3.database.StandaloneDatabaseProvider;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DefaultDataSource;
@@ -22,7 +21,6 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.source.preload.MediaSourceFactorySupplier;
 import androidx.media3.exoplayer.text.SubtitleTranscript;
-import androidx.media3.exoplayer.text.SubtitleTranscriptParserFactory;
 import androidx.media3.exoplayer.text.SubtitleTranscriptSession;
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy;
 import androidx.media3.extractor.DefaultExtractorsFactory;
@@ -148,16 +146,16 @@ public class ExoMediaSourceFactory implements MediaSource.Factory {
 
     private MediaSource.Factory createMediaSourceFactory(MediaItem mediaItem) {
         SubtitleTranscript transcript = subtitleTranscriptSession.forMediaItem(mediaItem);
-        ExtractorsFactory extractorsFactory = createDefaultExtractorsFactory().setMp4ClearKeys(
-                LocalClearKeyLicense.parse(mediaItem.localConfiguration.drmConfiguration));
-        SubtitleParser.Factory subtitleParserFactory;
+        ExtractorsFactory extractorsFactory = createDefaultExtractorsFactory();
+        SubtitleParser.Factory subtitleParserFactory = null;
         if (libassPlaybackSession.isAvailable()) {
             LibassPlaybackSession.MediaComponents components = libassPlaybackSession.createMediaComponents(mediaItem, extractorsFactory, transcript);
             extractorsFactory = components.extractorsFactory;
             subtitleParserFactory = components.subtitleParserFactory;
-        } else subtitleParserFactory = new SubtitleTranscriptParserFactory(transcript);
+        }
         DataSource.Factory dataSourceFactory = createDataSourceFactory(ExoUtil.extractHeaders(mediaItem), ExoUtil.extractAuth(mediaItem));
-        MediaSource.Factory factory = new DefaultMediaSourceFactory(dataSourceFactory, extractorsFactory).setSubtitleParserFactory(subtitleParserFactory);
+        DefaultMediaSourceFactory factory = new DefaultMediaSourceFactory(dataSourceFactory, extractorsFactory);
+        if (subtitleParserFactory != null) factory.setSubtitleParserFactory(subtitleParserFactory);
         return new ContentTypeResolvingMediaSource.Factory(factory, dataSourceFactory);
     }
 

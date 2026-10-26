@@ -45,10 +45,8 @@ import com.fongmi.android.tv.player.exo.ExoCommand;
 import com.fongmi.android.tv.player.exo.ExoPlayerEngine;
 import com.fongmi.android.tv.player.media.MediaItemFactory;
 import com.fongmi.android.tv.player.media.PlaySpec;
-import com.fongmi.android.tv.player.mpv.MpvPlayerEngine;
 import com.fongmi.android.tv.player.mpv.MpvScriptSession;
 import com.fongmi.android.tv.player.mpv.MpvScripts;
-import com.fongmi.android.tv.player.mpv.MpvUtil;
 import com.fongmi.android.tv.player.parse.ParseJob;
 import com.fongmi.android.tv.player.track.TrackUtil;
 import com.fongmi.android.tv.server.LogSession;
@@ -168,7 +166,7 @@ public class PlayerManager implements ParseCallback {
     }
 
     public boolean runMpvScript(MpvScripts.Item item) {
-        return engine instanceof MpvPlayerEngine mpv && mpv.runScript(item);
+        return false;
     }
 
     public ExoCommand.Result runExoCommand(MpvScripts.Item item, PlayerView playerView) {
@@ -177,15 +175,14 @@ public class PlayerManager implements ParseCallback {
     }
 
     public MpvScriptSession.Status getMpvScriptStatus(String id) {
-        return engine instanceof MpvPlayerEngine mpv ? mpv.getScriptStatus(id) : null;
+        return null;
     }
 
     public List<String> getMpvScriptBindings() throws JSONException {
-        return engine instanceof MpvPlayerEngine mpv ? mpv.getScriptBindings() : List.of();
+        return List.of();
     }
 
     public void reloadMpvScripts(boolean reloadStartupScripts, String reloadButtonId) {
-        if (engine instanceof MpvPlayerEngine mpv) mpv.reloadScripts(reloadStartupScripts, reloadButtonId);
     }
 
     private void setPlayer(Player player) {
@@ -412,7 +409,6 @@ public class PlayerManager implements ParseCallback {
     }
 
     public void setEngine(int targetEngine) {
-        if (targetEngine == PlayerSetting.ENGINE_MPV && !MpvUtil.checkInstalled()) return;
         PlayerSetting.putEngine(targetEngine);
         if (isEmpty() || PlayerEngineFactory.matches(engine, spec)) return;
         restartCurrent();

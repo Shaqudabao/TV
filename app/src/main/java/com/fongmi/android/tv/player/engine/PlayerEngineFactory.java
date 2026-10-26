@@ -1,17 +1,13 @@
 package com.fongmi.android.tv.player.engine;
 
 import static com.fongmi.android.tv.player.engine.PlayerEngine.Type.EXO;
-import static com.fongmi.android.tv.player.engine.PlayerEngine.Type.MPV;
 
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.hls.CmgConfiguration;
-import androidx.media3.mpvplayer.media.MpvDrmSupport;
 
 import com.fongmi.android.tv.player.exo.ExoPlayerEngine;
 import com.fongmi.android.tv.player.media.MediaItemFactory;
 import com.fongmi.android.tv.player.media.PlaySpec;
-import com.fongmi.android.tv.player.mpv.MpvPlayerEngine;
-import com.fongmi.android.tv.setting.PlayerSetting;
 import com.github.catvod.utils.UriUtil;
 
 public final class PlayerEngineFactory {
@@ -26,8 +22,7 @@ public final class PlayerEngineFactory {
 
     public static PlayerEngine create(PlayerEngine.Type type, Player.Listener listener) {
         return switch (type) {
-            case EXO -> new ExoPlayerEngine(listener);
-            case MPV -> new MpvPlayerEngine(listener);
+            case EXO, MPV -> new ExoPlayerEngine(listener);
         };
     }
 
@@ -40,22 +35,18 @@ public final class PlayerEngineFactory {
     }
 
     private static PlayerEngine.Type resolve(PlaySpec spec) {
-        return requiresExo(spec) ? EXO : resolve();
+        return EXO;
     }
 
     private static PlayerEngine.Type resolve() {
-        return isMpvReady() ? MPV : EXO;
+        return EXO;
     }
 
     static boolean requiresExo(PlaySpec spec) {
-        return isCmg(spec) || "smb".equals(UriUtil.scheme(spec.getUrl())) || (spec.getDrm() != null && !MpvDrmSupport.supports(MediaItemFactory.from(spec)));
+        return isCmg(spec) || "smb".equals(UriUtil.scheme(spec.getUrl()));
     }
 
     private static boolean isCmg(PlaySpec spec) {
         return CmgConfiguration.fromMediaUri(spec.getUri()) != null;
-    }
-
-    private static boolean isMpvReady() {
-        return PlayerSetting.isMpv() && MpvPlayerEngine.isAvailable();
     }
 }

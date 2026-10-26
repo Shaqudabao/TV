@@ -11,12 +11,10 @@ import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.databinding.ActivitySettingPlayerBinding;
 import com.fongmi.android.tv.impl.BufferListener;
 import com.fongmi.android.tv.impl.UaListener;
-import com.fongmi.android.tv.player.mpv.MpvUtil;
 import com.fongmi.android.tv.setting.PlayerSetting;
 import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.ui.base.BaseActivity;
 import com.fongmi.android.tv.ui.dialog.BufferDialog;
-import com.fongmi.android.tv.ui.dialog.MpvConfDialog;
 import com.fongmi.android.tv.ui.dialog.UaDialog;
 import com.fongmi.android.tv.utils.ResUtil;
 
@@ -54,7 +52,6 @@ public class SettingPlayerActivity extends BaseActivity implements UaListener, B
         mBinding.decode.setOnClickListener(this::onDecodeSetting);
         mBinding.adblock.setOnClickListener(this::setAdblock);
         mBinding.libass.setOnClickListener(this::setLibass);
-        mBinding.mpvConf.setOnClickListener(this::onMpvConf);
         mBinding.mpvGpuNext.setOnClickListener(this::setMpvGpuNext);
         mBinding.mpvVulkan.setOnClickListener(this::setMpvVulkan);
         mBinding.render.setOnClickListener(this::setRender);
@@ -66,7 +63,7 @@ public class SettingPlayerActivity extends BaseActivity implements UaListener, B
 
     private void setVisible() {
         boolean exo = PlayerSetting.isExo();
-        boolean vulkan = !exo && MpvUtil.isVulkanSupported();
+        boolean vulkan = false;
         if (PlayerSetting.isBackgroundPiP()) PlayerSetting.putBackground(1);
         mBinding.exoRow.setVisibility(exo ? View.VISIBLE : View.GONE);
         mBinding.mpvRow.setVisibility(exo ? View.GONE : View.VISIBLE);
@@ -78,14 +75,9 @@ public class SettingPlayerActivity extends BaseActivity implements UaListener, B
 
     private void setEngine(View view) {
         int index = (PlayerSetting.getEngine() + 1) % engine.length;
-        if (index == PlayerSetting.ENGINE_MPV && !MpvUtil.checkInstalled()) return;
         PlayerSetting.putEngine(index);
         setPlaybackModeText();
         setVisible();
-    }
-
-    private void onMpvConf(View view) {
-        MpvConfDialog.show(this);
     }
 
     private void setMpvGpuNext(View view) {

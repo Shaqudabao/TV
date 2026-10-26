@@ -28,12 +28,9 @@ final class DecoderSettingPanel {
     void bind() {
         binding.auto.title.setText(R.string.decoder_mode_auto);
         binding.auto.summary.setText(R.string.decoder_mode_auto_detail);
-        binding.hardware.title.setText(R.string.decoder_mode_hardware);
-        binding.hardware.summary.setText(R.string.decoder_mode_hardware_detail);
-        binding.software.title.setText(R.string.decoder_mode_software);
-        binding.software.summary.setText(R.string.decoder_mode_software_detail);
-        binding.ffmpeg.title.setText(R.string.decoder_mode_ffmpeg);
-        binding.ffmpeg.summary.setText(R.string.decoder_mode_ffmpeg_detail);
+        binding.hardware.getRoot().setVisibility(View.GONE);
+        binding.software.getRoot().setVisibility(View.GONE);
+        binding.ffmpeg.getRoot().setVisibility(View.GONE);
         boolean mpv = player.getEngine() == PlayerSetting.ENGINE_MPV;
         binding.tabGroup.setVisibility(mpv ? View.GONE : View.VISIBLE);
         trackType = C.TRACK_TYPE_VIDEO;
@@ -51,9 +48,6 @@ final class DecoderSettingPanel {
     void release() {
         binding.tabGroup.clearOnButtonCheckedListeners();
         binding.auto.getRoot().setOnClickListener(null);
-        binding.hardware.getRoot().setOnClickListener(null);
-        binding.software.getRoot().setOnClickListener(null);
-        binding.ffmpeg.getRoot().setOnClickListener(null);
     }
 
     private MaterialButton[] getTabs() {
@@ -65,9 +59,9 @@ final class DecoderSettingPanel {
         DecoderMode selected = player.getDecoderMode(trackType);
         binding.unavailable.setVisibility(modes.isEmpty() ? View.VISIBLE : View.GONE);
         bindMode(binding.auto, DecoderMode.AUTO, modes, selected);
-        bindMode(binding.hardware, DecoderMode.HARDWARE, modes, selected);
-        bindMode(binding.software, DecoderMode.SOFTWARE, modes, selected);
-        bindMode(binding.ffmpeg, DecoderMode.FFMPEG, modes, selected);
+        binding.hardware.getRoot().setVisibility(View.GONE);
+        binding.software.getRoot().setVisibility(View.GONE);
+        binding.ffmpeg.getRoot().setVisibility(View.GONE);
     }
 
     private void bindMode(ViewDecoderModeRowBinding row, DecoderMode mode, List<DecoderMode> modes, DecoderMode selected) {

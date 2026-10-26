@@ -23,7 +23,6 @@ import androidx.media3.exoplayer.offline.Downloader;
 import com.fongmi.android.tv.App;
 import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.api.node.NodeRuntime;
-import com.fongmi.android.tv.player.mpv.MpvUtil;
 import com.fongmi.android.tv.utils.ApkCache;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.RuntimeInstaller;
@@ -222,7 +221,8 @@ public final class ModuleViewModel extends AndroidViewModel {
             case NODEJS -> checkNodeRuntime(signal);
             case QUICKJS -> module.entry(QuickJsRuntime.class).check();
             case THUNDER -> module.entry(ThunderRuntime.class).check();
-            case MPV -> MpvUtil.loadRuntime();
+            case MPV -> {
+            }
         }
         signal.throwIfCanceled();
         return version;
