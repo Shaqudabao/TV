@@ -136,7 +136,7 @@ public class ExoPlayerEngine implements PlayerEngine, AnalyticsListener {
 
     @Override
     public DiscMenuController getDiscMenuController() {
-        return navigation;
+        return null;
     }
 
     @Override
