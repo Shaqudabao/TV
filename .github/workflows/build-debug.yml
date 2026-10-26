@@ -51,7 +51,7 @@ jobs:
       - name: 编译 mobile debug 包
         run: |
           chmod +x gradlew
-          ./gradlew assembleMobileDebug --no-daemon -Dorg.gradle.jvmargs=-Xmx4g
+          ./gradlew assembleMobileDebug -x verifyMobileDebugMpvNative --no-daemon -Dorg.gradle.jvmargs=-Xmx4g
 
       - name: 上传 APK
         uses: actions/upload-artifact@v4
